@@ -33,3 +33,20 @@ And script files:
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="./app.js"></script>
 ```
+
+## Create the javascript file
+
+See the app.js. We will add all javascript code that draw the line chart here.
+
+## Load the data.csv
+
+```javascript
+const draw = async () => {
+  const dataset = await d3.csv("data.csv");
+  console.log(dataset);
+};
+
+draw();
+```
+
+If we open the index.html file, we could see the dataset is logged to the console.
