@@ -29,6 +29,18 @@ const draw = async () => {
   const ctr = svg
     .append("g")
     .attr("transform", `translate(${dimensions.margin}, ${dimensions.margin})`);
+
+  // create the x and y scales
+  const yScale = d3
+    .scaleLinear()
+    .domain(d3.extent(dataset, yAccessor))
+    .range([dimensions.ctrHeight, 0])
+    .nice();
+
+  const xScale = d3
+    .scaleLinear()
+    .domain(d3.extent(dataset, xAccessor))
+    .range([0, dimensions.ctrWidth]);
 };
 
 draw();
