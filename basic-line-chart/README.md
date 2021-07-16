@@ -111,3 +111,26 @@ const xScale = d3
   .domain(d3.extent(dataset, xAccessor))
   .range([0, dimensions.ctrWidth]);
 ```
+
+## Create the line
+
+Create a line generator using d3.line() function.
+
+For each data, the x value is: use the xAccessor to get the data, and scale to the right value in x axis. The y value is the same.
+
+Create a path in the container. The datum means bind the data to a single svg element. Attr d describes the path. Fill, stroke, stroke-width defines how the line looks like.
+
+```javascript
+const lineGenerator = d3
+  .line()
+  .x((d) => xScale(xAccessor(d)))
+  .y((d) => yScale(yAccessor(d)));
+
+ctr
+  .append("path")
+  .datum(dataset)
+  .attr("d", lineGenerator)
+  .attr("fill", "none")
+  .attr("stroke", "Brown")
+  .attr("stroke-width", 2);
+```

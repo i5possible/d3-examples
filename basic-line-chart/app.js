@@ -41,6 +41,20 @@ const draw = async () => {
     .scaleLinear()
     .domain(d3.extent(dataset, xAccessor))
     .range([0, dimensions.ctrWidth]);
+
+  // create the line
+  const lineGenerator = d3
+    .line()
+    .x((d) => xScale(xAccessor(d)))
+    .y((d) => yScale(yAccessor(d)));
+
+  ctr
+    .append("path")
+    .datum(dataset)
+    .attr("d", lineGenerator)
+    .attr("fill", "none")
+    .attr("stroke", "Brown")
+    .attr("stroke-width", 2);
 };
 
 draw();
