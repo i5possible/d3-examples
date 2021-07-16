@@ -134,3 +134,19 @@ ctr
   .attr("stroke", "Brown")
   .attr("stroke-width", 2);
 ```
+
+## Create the axis
+
+Create xAxis and yAxis. The yAxis use the axisLeft and added a $ before the value. The xAxis use the axisBottom and added a # before the value, and the xAxis need to be moved to the bottom of the screen manually cause the top left is the (0, 0) in svg.
+
+```javascript
+const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`);
+ctr.append("g").call(yAxis);
+
+const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`);
+
+ctr
+  .append("g")
+  .style("transform", `translateY(${dimensions.ctrHeight}px`)
+  .call(xAxis);
+```

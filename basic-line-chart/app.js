@@ -55,6 +55,19 @@ const draw = async () => {
     .attr("fill", "none")
     .attr("stroke", "Brown")
     .attr("stroke-width", 2);
+
+  // create the x-axis and y-axis
+  const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`);
+  ctr.append("g").call(yAxis);
+
+  // the text of the axis is placed at the botton of the axis
+  const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`);
+
+  // move the x-axis to the bottom
+  ctr
+    .append("g")
+    .style("transform", `translateY(${dimensions.ctrHeight}px`)
+    .call(xAxis);
 };
 
 draw();
