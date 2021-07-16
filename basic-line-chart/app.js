@@ -58,16 +58,34 @@ const draw = async () => {
 
   // create the x-axis and y-axis
   const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`);
-  ctr.append("g").call(yAxis);
+  const yAxisGroup = ctr.append("g").call(yAxis).classed("axis", true);
+
+  // Add label to the y-axis
+  yAxisGroup
+    .append("text")
+    .attr("x", -dimensions.ctrHeight / 2)
+    .attr("y", -dimensions.margin + 12)
+    .attr("fill", "black")
+    .html("Prices")
+    .style("transform", "rotate(270deg)")
+    .style("text-anchor", "middle");
 
   // the text of the axis is placed at the botton of the axis
   const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`);
 
   // move the x-axis to the bottom
-  ctr
+  const xAxisGroup = ctr
     .append("g")
-    .style("transform", `translateY(${dimensions.ctrHeight}px`)
-    .call(xAxis);
+    .call(xAxis)
+    .style("transform", `translateY(${dimensions.ctrHeight}px)`)
+    .classed("axis", true);
+
+  xAxisGroup
+    .append("text")
+    .attr("x", dimensions.ctrWidth / 2)
+    .attr("y", dimensions.margin - 10)
+    .attr("fill", "black")
+    .text("Index");
 };
 
 draw();

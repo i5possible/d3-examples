@@ -150,3 +150,25 @@ ctr
   .style("transform", `translateY(${dimensions.ctrHeight}px`)
   .call(xAxis);
 ```
+
+## Add label to the axis
+
+Create label for yAxis and xAxis, and translate them to the right position and orientation.
+
+```javascript
+yAxisGroup
+  .append("text")
+  .attr("x", -dimensions.ctrHeight / 2)
+  .attr("y", -dimensions.margin + 12)
+  .attr("fill", "black")
+  .html("Prices")
+  .style("transform", "rotate(270deg)")
+  .style("text-anchor", "middle");
+
+xAxisGroup
+  .append("text")
+  .attr("x", dimensions.ctrWidth / 2)
+  .attr("y", dimensions.margin - 10)
+  .attr("fill", "black")
+  .text("Index");
+```
