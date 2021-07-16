@@ -50,3 +50,12 @@ draw();
 ```
 
 If we open the index.html file, we could see the dataset is logged to the console.
+
+## Prepare the data accessor
+
+The data accessor is a function that helps d3 know how to get the target data from the dataset.
+
+```javascript
+const xAccessor = (d) => parseInt(d.data);
+const yAccessor = (d) => parseInt(d.value);
+```
