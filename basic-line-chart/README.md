@@ -59,3 +59,38 @@ The data accessor is a function that helps d3 know how to get the target data fr
 const xAccessor = (d) => parseInt(d.data);
 const yAccessor = (d) => parseInt(d.value);
 ```
+
+## Prepare the container dimensions
+
+The width and the height is used to determine the size of the chart. The margin defines the margin from the line-chart to the svg border.
+
+If you are not familiar with svg, see [SVG](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial).
+
+```javascript
+const dimensions = {
+  width: 800,
+  height: 400,
+  margin: 50,
+};
+
+dimensions.ctrWidth = dimensions.width - dimensions.margin * 2;
+dimensions.ctrHeight = dimensions.height - dimensions.margin * 2;
+```
+
+## Create the container
+
+Select the chart div and create an svg in it. You could see a svg tag in the chart div now.
+
+Create an g tag in the svg to draw the line. You could see a g tag in the svg.
+
+```javascript
+const svg = d3
+  .select("#chart")
+  .append("svg")
+  .attr("width", dimensions.width)
+  .attr("height", dimensions.height);
+
+const ctr = svg
+  .append("g")
+  .attr("transform", `translate(${dimensions.margin}, ${dimensions.margin})`);
+```
