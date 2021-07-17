@@ -19,13 +19,7 @@ We added the links to the css files:
 
 ```css
     <link rel="stylesheet" href="style.css" />
-    <link
-      href="https://fonts.googleapis.com/css?​family=Baloo Thambi 2"
-      rel="stylesheet"
-    />
 ```
-
-One for our css and one for a font.
 
 And script files:
 
