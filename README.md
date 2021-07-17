@@ -9,3 +9,7 @@ Each example has its own folder. And the html file, javascript file, css file, d
 ## Basic line chart
 
 ![Line chart](./basic-line-chart/images/basic-line-chart.jpg)
+
+## Basic bar chart
+
+![Bar chart](./basic-bar-chart/images/basic-bar-chart.jpg)
