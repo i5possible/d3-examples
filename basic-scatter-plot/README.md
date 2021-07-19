@@ -56,11 +56,11 @@ See the app.js. We will add all javascript code that draw the scatter plot here.
 
 ```javascript
 const draw = async () => {
-  const dataset = await d3.csv("data.csv");
-  console.log(dataset);
-};
+  const dataset = await d3.csv('data.csv')
+  console.log(dataset)
+}
 
-draw();
+draw()
 ```
 
 If we open the index.html file, we could see the dataset is logged to the console.
@@ -70,9 +70,9 @@ If we open the index.html file, we could see the dataset is logged to the consol
 The data accessor is a function that helps d3 know how to get the target data from the dataset.
 
 ```javascript
-const indexAccessor = (d) => d.index;
-const xAccessor = (d) => parseInt(d.column);
-const yAccessor = (d) => parseInt(d.row);
+const indexAccessor = (d) => d.index
+const xAccessor = (d) => parseInt(d.column)
+const yAccessor = (d) => parseInt(d.row)
 ```
 
 ## Prepare the container dimensions
@@ -86,10 +86,10 @@ const dimensions = {
   width: 800,
   height: 400,
   margin: 50,
-};
+}
 
-dimensions.ctrWidth = dimensions.width - dimensions.margin * 2;
-dimensions.ctrHeight = dimensions.height - dimensions.margin * 2;
+dimensions.ctrWidth = dimensions.width - dimensions.margin * 2
+dimensions.ctrHeight = dimensions.height - dimensions.margin * 2
 ```
 
 ## Create the container
@@ -100,14 +100,14 @@ Create an g tag in the svg to draw the line. You could see a g tag in the svg.
 
 ```javascript
 const svg = d3
-  .select("#chart")
-  .append("svg")
-  .attr("width", dimensions.width)
-  .attr("height", dimensions.height);
+  .select('#chart')
+  .append('svg')
+  .attr('width', dimensions.width)
+  .attr('height', dimensions.height)
 
 const ctr = svg
-  .append("g")
-  .attr("transform", `translate(${dimensions.margin}, ${dimensions.margin})`);
+  .append('g')
+  .attr('transform', `translate(${dimensions.margin}, ${dimensions.margin})`)
 ```
 
 ## Create the x and y scales
@@ -121,32 +121,67 @@ const yScale = d3
   .scaleLinear()
   .domain(d3.extent(dataset, yAccessor))
   .rangeRound([dimensions.ctrHeight, 0])
-  .nice();
+  .nice()
 
 const xScale = d3
   .scaleLinear()
   .domain(d3.extent(dataset, xAccessor))
-  .rangeRound([0, dimensions.ctrWidth]);
+  .rangeRound([0, dimensions.ctrWidth])
 ```
 
 ## Create the scatter plot
 
+For each data, create an circle for it.
+
+```javascript
+ctr
+  .selectAll('circle')
+  .data(dataset)
+  .join('circle')
+  .attr('cx', (d) => xScale(xAccessor(d)))
+  .attr('cy', (d) => yScale(yAccessor(d)))
+  .attr('r', 5)
+  .attr('fill', 'red')
+```
+
 ## Create the tooltips
+
+When the mouse is over the scatter plot, we will show the tooltip.
+
+```javascript
+.on('mouseenter', function (event, datum) {
+    d3.select(this).attr('fill', 'brown').attr('r', 8)
+    tooltip
+        .style('display', 'block')
+        .style('top', yScale(yAccessor(datum)) - 25 + 'px')
+        .style('left', xScale(xAccessor(datum)) + 'px')
+
+    tooltip.select('.metric-column span').text(xAccessor(datum))
+    tooltip.select('.metric-row span').text(yAccessor(datum))
+
+    tooltip.select('.metric-index').text(indexAccessor(datum))
+})
+.on('mouseleave', function (event, datum) {
+    d3.select(this).attr('fill', 'red').attr('r', 5)
+
+    tooltip.style('display', 'none')
+})
+```
 
 ## Create the axis
 
 Create xAxis and yAxis.
 
 ```javascript
-const yAxis = d3.axisLeft(yScale);
-ctr.append("g").call(yAxis);
+const yAxis = d3.axisLeft(yScale)
+ctr.append('g').call(yAxis)
 
-const xAxis = d3.axisBottom(xScale);
+const xAxis = d3.axisBottom(xScale)
 
 ctr
-  .append("g")
-  .style("transform", `translateY(${dimensions.ctrHeight}px`)
-  .call(xAxis);
+  .append('g')
+  .style('transform', `translateY(${dimensions.ctrHeight}px`)
+  .call(xAxis)
 ```
 
 ## Add label to the axis
@@ -155,18 +190,18 @@ Create label for yAxis and xAxis, and translate them to the right position and o
 
 ```javascript
 yAxisGroup
-  .append("text")
-  .attr("x", -dimensions.ctrHeight / 2)
-  .attr("y", -dimensions.margin + 12)
-  .attr("fill", "black")
-  .html("Rows")
-  .style("transform", "rotate(270deg)")
-  .style("text-anchor", "middle");
+  .append('text')
+  .attr('x', -dimensions.ctrHeight / 2)
+  .attr('y', -dimensions.margin + 12)
+  .attr('fill', 'black')
+  .html('Rows')
+  .style('transform', 'rotate(270deg)')
+  .style('text-anchor', 'middle')
 
 xAxisGroup
-  .append("text")
-  .attr("x", dimensions.ctrWidth / 2)
-  .attr("y", dimensions.margin - 10)
-  .attr("fill", "black")
-  .text("Columns");
+  .append('text')
+  .attr('x', dimensions.ctrWidth / 2)
+  .attr('y', dimensions.margin - 10)
+  .attr('fill', 'black')
+  .text('Columns')
 ```

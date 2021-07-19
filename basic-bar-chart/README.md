@@ -39,11 +39,11 @@ See the app.js. We will add all javascript code that draw the line chart here.
 
 ```javascript
 const draw = async () => {
-  const dataset = await d3.csv("data.csv");
-  console.log(dataset);
-};
+  const dataset = await d3.csv('data.csv')
+  console.log(dataset)
+}
 
-draw();
+draw()
 ```
 
 If we open the index.html file, we could see the dataset is logged to the console.
@@ -53,8 +53,8 @@ If we open the index.html file, we could see the dataset is logged to the consol
 The data accessor is a function that helps d3 know how to get the target data from the dataset.
 
 ```javascript
-const xAccessor = (d) => parseInt(d.data);
-const yAccessor = (d) => parseInt(d.value);
+const xAccessor = (d) => parseInt(d.data)
+const yAccessor = (d) => parseInt(d.value)
 ```
 
 ## Prepare the container dimensions
@@ -68,10 +68,10 @@ const dimensions = {
   width: 800,
   height: 400,
   margin: 50,
-};
+}
 
-dimensions.ctrWidth = dimensions.width - dimensions.margin * 2;
-dimensions.ctrHeight = dimensions.height - dimensions.margin * 2;
+dimensions.ctrWidth = dimensions.width - dimensions.margin * 2
+dimensions.ctrHeight = dimensions.height - dimensions.margin * 2
 ```
 
 ## Create the container
@@ -82,14 +82,14 @@ Create an g tag in the svg to draw the line. You could see a g tag in the svg.
 
 ```javascript
 const svg = d3
-  .select("#chart")
-  .append("svg")
-  .attr("width", dimensions.width)
-  .attr("height", dimensions.height);
+  .select('#chart')
+  .append('svg')
+  .attr('width', dimensions.width)
+  .attr('height', dimensions.height)
 
 const ctr = svg
-  .append("g")
-  .attr("transform", `translate(${dimensions.margin}, ${dimensions.margin})`);
+  .append('g')
+  .attr('transform', `translate(${dimensions.margin}, ${dimensions.margin})`)
 ```
 
 ## Create the x and y scales
@@ -101,12 +101,12 @@ const yScale = d3
   .scaleLinear()
   .domain(d3.extent(dataset, yAccessor))
   .range([dimensions.ctrHeight, 0])
-  .nice();
+  .nice()
 
 const xScale = d3
   .scaleLinear()
   .domain(d3.extent(dataset, xAccessor))
-  .range([0, dimensions.ctrWidth]);
+  .range([0, dimensions.ctrWidth])
 ```
 
 ## Create the bars
@@ -129,9 +129,9 @@ const bin = d3
   .bin()
   .domain(xScale.domain())
   .value(xAccessor)
-  .thresholds(xScale.ticks());
+  .thresholds(xScale.ticks())
 
-const newDataSet = bin(dataset);
+const newDataSet = bin(dataset)
 ```
 
 ### Create the new yScale
@@ -141,13 +141,13 @@ Since the new dataset have an array, we use the mean of the data here. You could
 d3.max() will find the max value in an array, the second param is accessor. The accessor is optional.
 
 ```javascript
-const yAccessor = (d) => d3.mean(d, (data) => data.value);
+const yAccessor = (d) => d3.mean(d, (data) => data.value)
 
 const yScale = d3
   .scaleLinear()
   .domain([0, d3.max(newDataSet, yAccessor)])
   .range([dimensions.ctrHeight, 0])
-  .nice();
+  .nice()
 ```
 
 ### Use nice for the xScale
@@ -159,7 +159,7 @@ const xScale = d3
   .scaleLinear()
   .domain(d3.extent(dataset, xAccessor))
   .range([0, dimensions.ctrWidth])
-  .nice();
+  .nice()
 ```
 
 ### Create the rectangle
@@ -168,16 +168,16 @@ Use the newDataSet to create the rectangles. Set the x, y, width, height, fill a
 
 ```javascript
 ctr
-  .selectAll("rect")
+  .selectAll('rect')
   .data(newDataSet)
-  .join("rect")
-  .attr("fill", "Brown")
-  .attr("x", (d) => xScale(d.x0) + dimensions.padding)
-  .attr("y", (d) => yScale(yAccessor(d)))
-  .attr("width", (d) =>
+  .join('rect')
+  .attr('fill', 'Brown')
+  .attr('x', (d) => xScale(d.x0) + dimensions.padding)
+  .attr('y', (d) => yScale(yAccessor(d)))
+  .attr('width', (d) =>
     d3.max([0, xScale(d.x1) - xScale(d.x0) - dimensions.padding * 2])
   )
-  .attr("height", (d) => dimensions.ctrHeight - yScale(yAccessor(d)));
+  .attr('height', (d) => dimensions.ctrHeight - yScale(yAccessor(d)))
 ```
 
 ## Create the axis
@@ -185,15 +185,15 @@ ctr
 Create xAxis and yAxis. The yAxis use the axisLeft and added a $ before the value. The xAxis use the axisBottom and added a # before the value, and the xAxis need to be moved to the bottom of the screen manually cause the top left is the (0, 0) in svg.
 
 ```javascript
-const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`);
-ctr.append("g").call(yAxis);
+const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`)
+ctr.append('g').call(yAxis)
 
-const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`);
+const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`)
 
 ctr
-  .append("g")
-  .style("transform", `translateY(${dimensions.ctrHeight}px`)
-  .call(xAxis);
+  .append('g')
+  .style('transform', `translateY(${dimensions.ctrHeight}px`)
+  .call(xAxis)
 ```
 
 ## Add label to the axis
@@ -202,18 +202,18 @@ Create label for yAxis and xAxis, and translate them to the right position and o
 
 ```javascript
 yAxisGroup
-  .append("text")
-  .attr("x", -dimensions.ctrHeight / 2)
-  .attr("y", -dimensions.margin + 12)
-  .attr("fill", "black")
-  .html("Prices")
-  .style("transform", "rotate(270deg)")
-  .style("text-anchor", "middle");
+  .append('text')
+  .attr('x', -dimensions.ctrHeight / 2)
+  .attr('y', -dimensions.margin + 12)
+  .attr('fill', 'black')
+  .html('Prices')
+  .style('transform', 'rotate(270deg)')
+  .style('text-anchor', 'middle')
 
 xAxisGroup
-  .append("text")
-  .attr("x", dimensions.ctrWidth / 2)
-  .attr("y", dimensions.margin - 10)
-  .attr("fill", "black")
-  .text("Index");
+  .append('text')
+  .attr('x', dimensions.ctrWidth / 2)
+  .attr('y', dimensions.margin - 10)
+  .attr('fill', 'black')
+  .text('Index')
 ```
