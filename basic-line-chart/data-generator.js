@@ -1,7 +1,7 @@
 const { writeArrayToCsv } = require('../utils/file')
 
 const generateBasicLineChartData = (
-  headers,
+  headers = ['data', 'value'],
   yMin = 0,
   yMax = 100,
   rows = 40
@@ -15,9 +15,8 @@ const generateBasicLineChartData = (
   return data
 }
 
-const generateDataFile = () => {
-  const data = generateBasicLineChartData(['data', 'value'])
-  writeArrayToCsv('data.csv', data)
+const generateDataFile = (dataGenerator) => {
+  writeArrayToCsv('data.csv', dataGenerator())
 }
 
-generateDataFile()
+generateDataFile(generateBasicLineChartData)
