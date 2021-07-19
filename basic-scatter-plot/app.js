@@ -44,6 +44,15 @@ const draw = async () => {
     .rangeRound([0, dimensions.ctrWidth])
     .nice();
 
+  ctr
+    .selectAll("circle")
+    .data(dataset)
+    .join("circle")
+    .attr("cx", (d) => xScale(xAccessor(d)))
+    .attr("cy", (d) => yScale(yAccessor(d)))
+    .attr("r", 5)
+    .attr("fill", "red");
+
   // create the x-axis and y-axis
   const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${d}`);
   const yAxisGroup = ctr.append("g").call(yAxis).classed("axis", true);
