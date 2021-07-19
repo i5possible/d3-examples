@@ -44,6 +44,8 @@ const draw = async () => {
     .rangeRound([0, dimensions.ctrWidth])
     .nice();
 
+  const tooltip = d3.select("#tooltip");
+
   ctr
     .selectAll("circle")
     .data(dataset)
@@ -51,7 +53,24 @@ const draw = async () => {
     .attr("cx", (d) => xScale(xAccessor(d)))
     .attr("cy", (d) => yScale(yAccessor(d)))
     .attr("r", 5)
-    .attr("fill", "red");
+    .attr("fill", "red")
+    .on("mouseenter", function (event, datum) {
+      d3.select(this).attr("fill", "brown").attr("r", 8);
+      tooltip
+        .style("display", "block")
+        .style("top", yScale(yAccessor(datum)) - 25 + "px")
+        .style("left", xScale(xAccessor(datum)) + "px");
+
+      tooltip.select(".metric-column span").text(xAccessor(datum));
+      tooltip.select(".metric-row span").text(yAccessor(datum));
+
+      tooltip.select(".metric-index").text(indexAccessor(datum));
+    })
+    .on("mouseleave", function (event, datum) {
+      d3.select(this).attr("fill", "red").attr("r", 5);
+
+      tooltip.style("display", "none");
+    });
 
   // create the x-axis and y-axis
   const yAxis = d3.axisLeft(yScale).tickFormat((d) => `${d}`);
