@@ -19,3 +19,7 @@ Each example has its own folder. And the html file, javascript file, css file, d
 ### Line
 
 ![Line](./basic-shape/line/images/line.png)
+
+### Arc
+
+![Arc](./basic-shape/arc/images/arc.png)
