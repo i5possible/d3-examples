@@ -4,6 +4,10 @@ This is an example for a line shape. The line is defined by two points. and you 
 
 The line can be used as a base for other shapes like rect, circle, ellipse, polygon, etc.
 
+## Example
+
+![line](./images/line.png)
+
 ## Draw the line
 
 ```javascript

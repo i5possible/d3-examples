@@ -13,3 +13,9 @@ Each example has its own folder. And the html file, javascript file, css file, d
 ## Basic bar chart
 
 ![Bar chart](./basic-bar-chart/images/basic-bar-chart.jpg)
+
+## Shapes
+
+### Line
+
+![Line](./basic-shape/line/images/line.png)
