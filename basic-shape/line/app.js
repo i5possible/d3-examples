@@ -45,6 +45,11 @@ const draw = async () => {
   // create the line
   const line = d3
     .line()
+    // .curve(d3.curveBasis)
+    .curve(d3.curveNatural)
+    // .curve(d3.curveCadinal)
+    // .curve(d3.curveStep)
+    // .curve(d3.curveLinear)
     .x((d) => xScale(xAccessor(d)))
     .y((d) => yScale(yAccessor(d)))
 
