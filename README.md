@@ -23,3 +23,7 @@ Each example has its own folder. And the html file, javascript file, css file, d
 ### Arc
 
 ![Arc](./basic-shape/arc/images/arc.png)
+
+### Pie
+
+![Pie](./basic-shape/pie/images/pie.png)
