@@ -1,168 +1,203 @@
 # Basic line chart
 
-This example is a basic line chart. In this example, we will explain:
+This example is a duel line chart. In this example, we will explain what is the changes we made comparing to basic-line-chart:
 
-- how to create the container
-- how to add a line to the container
-- how to add x-Axis and y-Axis
-- how to add label for x-Axis and y-Axis
+- increase the container's size as wanted
+- add the second chart as expected, make sure we transform the chart into the right place
+- make sure we have the dataset for the second chart
+- add tooltip for the two charts
+- add mouse event to transform the tooltip to the right place
 
 ## Prepare the data
 
 Run node data-generator.js or user the given data.csv.
 
-## Create the html file
+## Increase the container's size
 
-See the index.html. It contains an empty div to show the line chart we are going to build. And we set the id of this div to `chart` to use it easily.
-
-We added the links to the css files:
-
-```css
-    <link rel="stylesheet" href="style.css" />
-```
-
-And script files:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="./app.js"></script>
-```
-
-## Create the javascript file
-
-See the app.js. We will add all javascript code that draw the line chart here.
-
-## Load the data.csv
-
-```javascript
-const draw = async () => {
-  const dataset = await d3.csv('data.csv')
-  console.log(dataset)
-}
-
-draw()
-```
-
-If we open the index.html file, we could see the dataset is logged to the console.
-
-## Prepare the data accessor
-
-The data accessor is a function that helps d3 know how to get the target data from the dataset.
-
-```javascript
-const xAccessor = (d) => parseInt(d.data)
-const yAccessor = (d) => parseInt(d.value)
-```
-
-## Prepare the container dimensions
-
-The width and the height is used to determine the size of the chart. The margin defines the margin from the line-chart to the svg border.
-
-If you are not familiar with svg, see [SVG](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial).
+We changed the dimensions.height to 800 to be able to display another chart, and calculate the right ctrHeight for each chart.
 
 ```javascript
 const dimensions = {
   width: 800,
-  height: 400,
+  height: 800,
   margin: 50,
 }
-
-dimensions.ctrWidth = dimensions.width - dimensions.margin * 2
-dimensions.ctrHeight = dimensions.height - dimensions.margin * 2
+dimensions.ctrHeight = dimensions.height / 2 - dimensions.margin * 2
 ```
 
-## Create the container
+## Add the html/css for the tooltip
 
-Select the chart div and create an svg in it. You could see a svg tag in the chart div now.
+We added the html as follow:
 
-Create an g tag in the svg to draw the line. You could see a g tag in the svg.
+```html
+<div id="tooltip1" class="tooltip">
+  <div class="metric-x">Column: <span></span></div>
+  <div class="metric-y">Row: <span></span></div>
+</div>
+<div id="tooltip-line1" class="tooltip-line"></div>
+<div id="tooltip2" class="tooltip">
+  <div class="metric-x">Column: <span></span></div>
+  <div class="metric-y">Row: <span></span></div>
+</div>
+<div id="tooltip-line2" class="tooltip-line"></div>
+```
+
+As you can see, we prepared two tooltips as well as two tooltip-lines. Each of the tooltip contains the Row value and the column value.
+
+And we added the css as follow:
+
+```css
+.tooltip {
+  text-align: center;
+  border: 1px solid #ccc;
+  position: absolute;
+  padding: 10px;
+  background-color: #fff;
+  display: none;
+}
+
+.tooltip .metric-date {
+  text-decoration: underline;
+}
+
+.tooltip-line {
+  position: absolute;
+  display: block;
+  width: 2px;
+  height: 300px;
+  background-color: red;
+}
+
+body {
+  margin: 0;
+}
+```
+
+We use the absolute position for the tooltip to be able to transform them into the right place as we want. The display of the tooltip is set to none to hide the tooltip by default.
+
+## Add the second chart
+
+Create another svg group to display the chart. Make sure we translate it to the right place.
 
 ```javascript
-const svg = d3
-  .select('#chart')
-  .append('svg')
-  .attr('width', dimensions.width)
-  .attr('height', dimensions.height)
-
-const ctr = svg
+const ctr2 = svg
   .append('g')
-  .attr('transform', `translate(${dimensions.margin}, ${dimensions.margin})`)
+  .attr(
+    'transform',
+    `translate(${dimensions.margin}, ${
+      dimensions.margin + dimensions.height / 2
+    })`
+  )
 ```
 
-## Create the x and y scales
-
-Using the scaleLinear() function to create scale functions to map the data to the width/height in the container.
+Define the linerGradient color we are going to use. The linerGradient need to define the direction of the color using x1,x2,y1,y2, and dine the stop-color and offset for each color we use in the gradient.
 
 ```javascript
-const yScale = d3
-  .scaleLinear()
-  .domain(d3.extent(dataset, yAccessor))
-  .range([dimensions.ctrHeight, 0])
-  .nice()
+// use the colors to define the linearGradient
+var colors = ['rgb(43, 110, 210, 1)', 'rgb(43, 110, 210, 0.25)']
 
-const xScale = d3
-  .scaleLinear()
-  .domain(d3.extent(dataset, xAccessor))
-  .range([0, dimensions.ctrWidth])
+var grad = svg
+  .append('defs')
+  .append('linearGradient')
+  .attr('id', 'grad')
+  .attr('x1', '0%')
+  .attr('x2', '0%')
+  .attr('y1', '0%')
+  .attr('y2', '100%')
+
+grad
+  .selectAll('stop')
+  .data(colors)
+  .enter()
+  .append('stop')
+  .style('stop-color', function (d) {
+    return d
+  })
+  .attr('offset', function (d, i) {
+    return 100 * (i / (colors.length - 1)) + '%'
+  })
 ```
 
-## Create the line
+## Add the tooltips
 
-Create a line generator using d3.line() function.
-
-For each data, the x value is: use the xAccessor to get the data, and scale to the right value in x axis. The y value is the same.
-
-Create a path in the container. The datum means bind the data to a single svg element. Attr d describes the path. Fill, stroke, stroke-width defines how the line looks like.
+We need to add the tooltip and events for the line chart to show the tooltip and tooltipLine.
+When the user hover on the chart, we shows the tooltips and move it to the right place.
+When the mouse is off the chart, we need to change the tooltips display back to none to hide it.
 
 ```javascript
-const lineGenerator = d3
-  .line()
-  .x((d) => xScale(xAccessor(d)))
-  .y((d) => yScale(yAccessor(d)))
+// select the tooltips
+const tooltip1 = d3.select('#tooltip1')
+const tooltipLine1 = d3.select('#tooltip-line1')
 
+const tooltip2 = d3.select('#tooltip2')
+const tooltipLine2 = d3.select('#tooltip-line2')
+
+// add circle to the datapoints of the chart
 ctr
-  .append('path')
-  .datum(dataset)
-  .attr('d', lineGenerator)
-  .attr('fill', 'none')
-  .attr('stroke', 'Brown')
-  .attr('stroke-width', 2)
+  .selectAll('circle')
+  .data(dataset)
+  .join('circle')
+  .attr('cx', (d) => xScale(xAccessor(d)))
+  .attr('cy', (d) => yScale(yAccessor(d)))
+  .attr('r', 5)
+  .attr('fill', 'red')
+  .attr('data-x', (d) => xAccessor(d))
+  .classed('tooltip-dots', true)
+  .on('mouseenter', function (event, datum) {
+    // make the circle bigger when the mouse hover on
+    d3.selectAll('.tooltip-dots')
+      .filter((d) => xAccessor(d) === xAccessor(datum))
+      .attr('fill', 'brown')
+      .attr('r', 8)
+
+    // show the tooltips and transform it to the right position
+    tooltip1
+      .style('display', 'block')
+      .style('top', yScale(yAccessor(datum)) - 25 + 'px')
+      .style('left', xScale(xAccessor(datum)) + 'px')
+
+    tooltip2
+      .style('display', 'block')
+      .style(
+        'top',
+        dimensions.height / 2 + yScale(yAccessor(datum)) - 25 + 'px'
+      )
+      .style('left', xScale(xAccessor(datum)) + 'px')
+
+    // show the tooltip lines and move it to the right place
+    tooltipLine1
+      .style('display', 'block')
+      .style('top', '50px')
+      .style('left', dimensions.margin + xScale(xAccessor(datum)) + 'px')
+
+    tooltipLine2
+      .style('display', 'block')
+      .style('top', dimensions.height / 2 + 50 + 'px')
+      .style('left', dimensions.margin + xScale(xAccessor(datum)) + 'px')
+
+    // show the tooltip text
+    tooltip1.select('.metric-x span').text(xAccessor(datum))
+    tooltip1.select('.metric-y span').text(yAccessor(datum))
+
+    tooltip2.select('.metric-x span').text(xAccessor(datum))
+    tooltip2.select('.metric-y span').text(yAccessor2(datum))
+  })
+  .on('mouseleave', function (event, datum) {
+    // make the circle smaller when the mouse leave
+    d3.selectAll('.tooltip-dots').attr('fill', 'red').attr('r', 5)
+
+    // hide the tooltips
+    tooltip1.style('display', 'none')
+    tooltip2.style('display', 'none')
+    tooltipLine1.style('display', 'none')
+    tooltipLine2.style('display', 'none')
+  })
 ```
 
-## Create the axis
+## Axis and label
 
-Create xAxis and yAxis. The yAxis use the axisLeft and added a $ before the value. The xAxis use the axisBottom and added a # before the value, and the xAxis need to be moved to the bottom of the screen manually cause the top left is the (0, 0) in svg.
+We haven't define the axises and the label for the second chart, but we could add them for sure. Could you try it by yourself?
 
-```javascript
-const yAxis = d3.axisLeft(yScale).tickFormat((d) => `$${d}`)
-ctr.append('g').call(yAxis)
+## Improvement
 
-const xAxis = d3.axisBottom(xScale).tickFormat((d) => `#${d}`)
-
-ctr
-  .append('g')
-  .style('transform', `translateY(${dimensions.ctrHeight}px`)
-  .call(xAxis)
-```
-
-## Add label to the axis
-
-Create label for yAxis and xAxis, and translate them to the right position and orientation.
-
-```javascript
-yAxisGroup
-  .append('text')
-  .attr('x', -dimensions.ctrHeight / 2)
-  .attr('y', -dimensions.margin + 12)
-  .attr('fill', 'black')
-  .html('Prices')
-  .style('transform', 'rotate(270deg)')
-  .style('text-anchor', 'middle')
-
-xAxisGroup
-  .append('text')
-  .attr('x', dimensions.ctrWidth / 2)
-  .attr('y', dimensions.margin - 10)
-  .attr('fill', 'black')
-  .text('Index')
-```
+Currently the use need to put the mouse on the small dot we defined to show the tooltip, we want it to be easy to magnet the tooltip to the closest datapoint. So we need to create the area to make it happens.

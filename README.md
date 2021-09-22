@@ -27,3 +27,7 @@ Each example has its own folder. And the html file, javascript file, css file, d
 ### Pie
 
 ![Pie](./basic-shape/pie/images/pie.png)
+
+### Duel line chart
+
+![Line chart](./duel-line-chart/images/duel-line-chart.jpg)
